@@ -9,31 +9,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
+        android:orientation="vertical"
         android:layout_centerVertical="true">
-        <Button
-            android:id="@+id/moveloomoBtn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="@string/moveLaser"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:background="@drawable/button_bg"
-            android:textSize="20sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+            <Button
+                android:id="@+id/moveloomoBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginEnd="20dp"
+                android:text="@string/moveLaser"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:background="@drawable/button_bg"
+                android:textSize="20sp"/>
 
-        <Button
-            android:id="@+id/backloomoBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginStart="10dp"
-            android:text="@string/backWaterjet"
-            android:textColor="@color/white"
-            android:textAllCaps="false"
-            android:background="@drawable/button_bg"
-            android:textSize="20sp"/>
+            <Button
+                android:id="@+id/backloomoBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:layout_marginStart="20dp"
+                android:text="@string/backWaterjet"
+                android:textColor="@color/white"
+                android:textAllCaps="false"
+                android:background="@drawable/button_bg"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>

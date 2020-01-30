@@ -108,9 +108,7 @@ public class FollowMeActivity extends Activity implements View.OnClickListener {
         }
 
         @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-
-        }
+        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) { }
     };
 
     private PresenterChangeInterface mPresenterChangeInterface = new PresenterChangeInterface() {

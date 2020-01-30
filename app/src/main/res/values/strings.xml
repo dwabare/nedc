@@ -3,5 +3,6 @@
     <string name="trainloomo">Train your loomo</string>
     <string name="submitloomo">Submit your loomo</string>
     <string name="moveLaser">Move to Laser</string>
-    <string name="backWaterjet">Back to Waterjet</string>
+    <string name="backWaterjet">Move to Waterjet</string>
+    <string name="stopLoomo">Stop loomo</string>
 </resources>
