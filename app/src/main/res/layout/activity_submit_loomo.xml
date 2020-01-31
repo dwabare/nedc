@@ -40,6 +40,17 @@
                 android:background="@drawable/button_bg"
                 android:textSize="20sp"/>
         </LinearLayout>
-
+        <Button
+            android:id="@+id/stoploomoBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/stopLoomo"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/button_bg"
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
     </LinearLayout>
 </RelativeLayout>

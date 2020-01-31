@@ -2,6 +2,7 @@ package com.segway.waterjecttolaser;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -139,20 +140,17 @@ public class SubmitLoomoActivity extends AppCompatActivity {
             }
         });
 
-        /*
+        Button stopBtn = findViewById(R.id.stoploomoBtn);
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBase.clearCheckPointsAndStop();
-
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putBoolean("isStopped",true);
-                editor.apply();
-
-                moveBtn.setEnabled(true);
-                backBtn.setEnabled(true);
+                try {
+                    Intent i = new Intent(SubmitLoomoActivity.this, MainActivity.class);
+                    startActivity(i);
+                }catch (Exception ex){ex.printStackTrace();}
             }
-        });*/
+        });
     }
 
     @Override
