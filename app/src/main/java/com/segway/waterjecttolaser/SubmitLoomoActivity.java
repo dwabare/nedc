@@ -135,7 +135,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     float valueY = Float.parseFloat(pathY[i]);
                     float valueTheta = Float.parseFloat(pathTheta[i]);
 
-                    mBase.addCheckPoint(-valueX,-valueY,valueTheta -(float) (Math.PI /2));
+                    mBase.addCheckPoint(valueX,valueY,valueTheta -(float) (Math.PI /2));
                 }
             }
         });
