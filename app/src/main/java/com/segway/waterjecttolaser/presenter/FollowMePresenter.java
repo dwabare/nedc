@@ -267,9 +267,7 @@ public class FollowMePresenter {
         }
 
         @Override
-        public void onPersonTrackingResult(DTSPerson person) {
-
-        }
+        public void onPersonTrackingResult(DTSPerson person) { }
 
         @Override
         public void onPersonTrackingError(int errorCode, String message) {
