@@ -17,17 +17,14 @@ import com.segway.robot.algo.minicontroller.CheckPoint;
 import com.segway.robot.algo.minicontroller.CheckPointStateListener;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.locomotion.sbv.Base;
-
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class SubmitLoomoActivity extends AppCompatActivity {
     Base mBase;
     SharedPreferences sharedPref;
-    private Set<String> rPathX;
-    private Set<String> rPathY;
-    private Set<String> rPathTheta;
+    private Set<String> rDistance;
+    private Set<String> rAngle;
     private Button moveBtn;
     private Button backBtn;
 
@@ -41,11 +38,10 @@ public class SubmitLoomoActivity extends AppCompatActivity {
         backBtn = findViewById(R.id.backloomoBtn);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
-        rPathX = sharedPref.getStringSet("robotPathX",null);
-        rPathY = sharedPref.getStringSet("robotPathY",null);
-        rPathTheta = sharedPref.getStringSet("robotPathTheta",null);
+        rDistance = sharedPref.getStringSet("robotDistance",null);
+        rAngle = sharedPref.getStringSet("robotAngle",null);
 
-        if((rPathX==null)&&(rPathY==null)&&(rPathTheta==null)){
+        if((rDistance==null)&&(rAngle==null)){
             Toast.makeText(CustomApplication.getContext(), "Path is not tracked",Toast.LENGTH_LONG).show();
             moveBtn.setEnabled(false);
             backBtn.setEnabled(false);
@@ -104,16 +100,16 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
-                String[] pathX = rPathX.toArray(new String[0]);
-                String[] pathY = rPathY.toArray(new String[0]);
-                String[] pathTheta = rPathTheta.toArray(new String[0]);
+                String[] distances = rDistance.toArray(new String[0]);
+                String[] angles = rAngle.toArray(new String[0]);
 
-                for (int i = 0 ; i < pathX.length ; i++) {
-                    float valueX = Float.parseFloat(pathX[i]);
-                    float valueY = Float.parseFloat(pathY[i]);
-                    float valueTheta = Float.parseFloat(pathTheta[i]);
+                for (int i = 0 ; i < distances.length ; i++) {
+                    float distance = Float.parseFloat(distances[i]);
+                    float angle = Float.parseFloat(angles[i]);
+                    float xPath = distance * (float) Math.cos(angle);
+                    float yPath = distance * (float) Math.sin(angle);
 
-                    mBase.addCheckPoint(valueX,valueY,valueTheta);
+                    mBase.addCheckPoint(xPath,yPath,angle);
                 }
             }
         });
@@ -126,16 +122,18 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
-                String[] pathX = rPathX.toArray(new String[0]);
-                String[] pathY = rPathY.toArray(new String[0]);
-                String[] pathTheta = rPathTheta.toArray(new String[0]);
+                mBase.addCheckPoint(0f,0f,(float) (-Math.PI /2));
 
-                for (int i = pathX.length - 1 ; i >= 0 ; i--) {
-                    float valueX = Float.parseFloat(pathX[i]);
-                    float valueY = Float.parseFloat(pathY[i]);
-                    float valueTheta = Float.parseFloat(pathTheta[i]);
+                String[] distances = rDistance.toArray(new String[0]);
+                String[] angles = rAngle.toArray(new String[0]);
 
-                    mBase.addCheckPoint(valueX,valueY,valueTheta -(float) (Math.PI /2));
+                for (int i = distances.length-1 ; i >=0 ; i--) {
+                    float distance = Float.parseFloat(distances[i]);
+                    float angle = Float.parseFloat(angles[i]);
+                    float xPath = distance * (float) Math.cos(angle);
+                    float yPath = distance * (float) Math.sin(angle);
+
+                    mBase.addCheckPoint(xPath,yPath,angle);
                 }
             }
         });

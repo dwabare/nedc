@@ -14,7 +14,6 @@ import com.segway.waterjecttolaser.CustomApplication;
 import com.segway.waterjecttolaser.interfaces.PresenterChangeInterface;
 import com.segway.waterjecttolaser.interfaces.ViewChangeInterface;
 import com.segway.waterjecttolaser.util.HeadControlHandlerImpl;
-import com.segway.waterjecttolaser.util.ToastUtil;
 import com.segway.waterjecttolaser.view.AutoFitDrawableView;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.locomotion.head.Head;
@@ -63,9 +62,8 @@ public class FollowMePresenter {
 
     private RobotStateType mCurrentState;
 
-    private Set<String> rPathX;
-    private Set<String> rPathY;
-    private Set<String> rPathTheta;
+    private Set<String> rDistance;
+    private Set<String> rAngle;
 
     public enum RobotStateType {
         INITIATE_DETECT, TERMINATE_DETECT, INITIATE_TRACK, TERMINATE_TRACK;
@@ -95,9 +93,8 @@ public class FollowMePresenter {
         }catch (Exception ex){ex.printStackTrace();}
 
         try{
-            rPathX = new HashSet<>();
-            rPathY = new HashSet<>();
-            rPathTheta = new HashSet<>();
+            rDistance = new HashSet<>();
+            rAngle = new HashSet<>();
         }catch (Exception ex){ex.printStackTrace();}
     }
 
@@ -161,13 +158,6 @@ public class FollowMePresenter {
         }
         mPresenterChangeInterface.showToast("initiate tracking....");
 
-        float pathX = mBase.getOdometryPose(-1).getX();
-        float pathY = mBase.getOdometryPose(-1).getY();
-        float pathTheta = mBase.getOdometryPose(-1).getTheta();
-        rPathX.add(String.valueOf(pathX));
-        rPathY.add(String.valueOf(pathY));
-        rPathTheta.add(String.valueOf(pathTheta));
-
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean("isArrived",false);
@@ -184,18 +174,10 @@ public class FollowMePresenter {
             }
             mPresenterChangeInterface.showToast("terminate tracking....");
 
-            float pathX = mBase.getOdometryPose(-1).getX();
-            float pathY = mBase.getOdometryPose(-1).getY();
-            float pathTheta = mBase.getOdometryPose(-1).getTheta();
-            rPathX.add(String.valueOf(pathX));
-            rPathY.add(String.valueOf(pathY));
-            rPathTheta.add(String.valueOf(pathTheta));
-
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
             SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putStringSet("robotPathX",rPathX);
-            editor.putStringSet("robotPathY",rPathY);
-            editor.putStringSet("robotPathTheta",rPathTheta);
+            editor.putStringSet("robotDistance",rDistance);
+            editor.putStringSet("robotAngle",rAngle);
             editor.putBoolean("isArrived",true);
             editor.apply();
         } else {
@@ -289,13 +271,10 @@ public class FollowMePresenter {
                 return;
             }
 
-            float pathX = mBase.getOdometryPose(-1).getX();
-            float pathY = mBase.getOdometryPose(-1).getY();
-            float pathTheta = mBase.getOdometryPose(-1).getTheta();
-            rPathX.add(String.valueOf(pathX));
-            rPathY.add(String.valueOf(pathY));
-            rPathTheta.add(String.valueOf(pathTheta));
-
+            float distance = person.getDistance();
+            float angle = person.getTheta();
+            rDistance.add(String.valueOf(distance));
+            rAngle.add(String.valueOf(angle));
 
             startTime = System.currentTimeMillis();
             mPresenterChangeInterface.drawPerson(person);
