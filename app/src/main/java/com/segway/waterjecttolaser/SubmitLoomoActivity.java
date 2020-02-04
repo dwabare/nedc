@@ -122,7 +122,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
-                mBase.addCheckPoint(0f,0f,(float) (-Math.PI /2));
+                //mBase.addCheckPoint(0f,0f,(float) (-Math.PI /2));
 
                 String[] distances = rDistance.toArray(new String[0]);
                 String[] angles = rAngle.toArray(new String[0]);
@@ -130,8 +130,8 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 for (int i = distances.length-1 ; i >=0 ; i--) {
                     float distance = Float.parseFloat(distances[i]);
                     float angle = Float.parseFloat(angles[i]);
-                    float xPath = distance * (float) Math.cos(angle);
-                    float yPath = distance * (float) Math.sin(angle);
+                    float xPath = distance * (float) Math.cos(angle+Math.PI);
+                    float yPath = distance * (float) Math.sin(angle+Math.PI);
 
                     mBase.addCheckPoint(xPath,yPath,angle);
                 }
