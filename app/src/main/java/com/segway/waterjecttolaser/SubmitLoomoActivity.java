@@ -16,12 +16,14 @@ import com.segway.robot.algo.Pose2D;
 import com.segway.robot.algo.minicontroller.CheckPoint;
 import com.segway.robot.algo.minicontroller.CheckPointStateListener;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
+import com.segway.robot.sdk.locomotion.head.Head;
 import com.segway.robot.sdk.locomotion.sbv.Base;
 import java.util.Objects;
 import java.util.Set;
 
 public class SubmitLoomoActivity extends AppCompatActivity {
-    Base mBase;
+    private Base mBase;
+    private Head mHead;
     SharedPreferences sharedPref;
     private Set<String> rDistance;
     private Set<String> rAngle;
@@ -55,6 +57,17 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 backBtn.setEnabled(false);
             }
         }
+
+        mHead = Head.getInstance();
+        mHead.bindService(CustomApplication.getContext(), new ServiceBinder.BindStateListener() {
+            @Override
+            public void onBind() {
+                resetHead();
+            }
+
+            @Override
+            public void onUnbind(String reason) { }
+        });
 
         mBase = Base.getInstance();
         mBase.bindService(CustomApplication.getContext(), new ServiceBinder.BindStateListener() {
@@ -100,16 +113,25 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
+                mBase.addCheckPoint(0f,0f,(float) (Math.PI));
+                resetHead();
+
                 String[] distances = rDistance.toArray(new String[0]);
                 String[] angles = rAngle.toArray(new String[0]);
 
-                for (int i = 0 ; i < distances.length ; i++) {
+                mBase.addCheckPoint(Float.parseFloat(distances[0]),0f);
+
+                for (int i = 1 ; i < distances.length ; i++) {
                     float distance = Float.parseFloat(distances[i]);
                     float angle = Float.parseFloat(angles[i]);
-                    float xPath = distance * (float) Math.cos(angle);
-                    float yPath = distance * (float) Math.sin(angle);
 
-                    mBase.addCheckPoint(xPath,yPath,angle);
+                    mBase.addCheckPoint(0f,0f,angle);
+                    resetHead();
+
+                    mBase.addCheckPoint(distance,0f);
+                    //float xPath = distance * (float) Math.cos(angle);
+                    //float yPath = distance * (float) Math.sin(angle);
+                    //mBase.addCheckPoint(xPath,yPath,angle);
                 }
             }
         });
@@ -122,18 +144,25 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
-                //mBase.addCheckPoint(0f,0f,(float) (-Math.PI /2));
+                mBase.addCheckPoint(0f,0f,(float) (Math.PI));
+                resetHead();
 
                 String[] distances = rDistance.toArray(new String[0]);
                 String[] angles = rAngle.toArray(new String[0]);
 
-                for (int i = distances.length-1 ; i >=0 ; i--) {
-                    float distance = Float.parseFloat(distances[i]);
-                    float angle = Float.parseFloat(angles[i]);
-                    float xPath = distance * (float) Math.cos(angle+Math.PI);
-                    float yPath = distance * (float) Math.sin(angle+Math.PI);
+                mBase.addCheckPoint(Float.parseFloat(distances[distances.length-1]),0f);
 
-                    mBase.addCheckPoint(xPath,yPath,angle);
+                for (int i = distances.length-2 ; i >=0 ; i--) {
+                    float distance = Float.parseFloat(distances[i]);
+                    float angle = Float.parseFloat(angles[i+1]);
+
+                    mBase.addCheckPoint(0f,0f,-angle);
+                    resetHead();
+
+                    mBase.addCheckPoint(distance,0f);
+                    //float xPath = distance * (float) Math.cos(angle+Math.PI);
+                    //float yPath = distance * (float) Math.sin(angle+Math.PI);
+                    //mBase.addCheckPoint(xPath,yPath,angle);
                 }
             }
         });
@@ -142,13 +171,23 @@ public class SubmitLoomoActivity extends AppCompatActivity {
         stopBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBase.clearCheckPointsAndStop();
+                try {
+                    mHead.unbindService();
+                    mBase.unbindService();
+                    mBase.clearCheckPointsAndStop();
+                }catch (Exception ex){ex.printStackTrace();}
                 try {
                     Intent i = new Intent(SubmitLoomoActivity.this, MainActivity.class);
                     startActivity(i);
                 }catch (Exception ex){ex.printStackTrace();}
             }
         });
+    }
+
+    private void resetHead() {
+        mHead.setMode(Head.MODE_SMOOTH_TACKING);
+        mHead.setWorldYaw(0);
+        mHead.setWorldPitch(0.7f);
     }
 
     @Override
@@ -164,4 +203,5 @@ public class SubmitLoomoActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
+
 }

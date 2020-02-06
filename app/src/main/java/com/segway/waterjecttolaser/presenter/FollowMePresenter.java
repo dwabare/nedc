@@ -39,12 +39,10 @@ public class FollowMePresenter {
     private PresenterChangeInterface mPresenterChangeInterface;
     private ViewChangeInterface mViewChangeInterface;
 
-
     private HeadPIDController mHeadPIDController = new HeadPIDController();
     private Vision mVision;
     private Head mHead;
     private Base mBase;
-
 
     private boolean isVisionBind;
     private boolean isHeadBind;
@@ -271,6 +269,7 @@ public class FollowMePresenter {
                 return;
             }
 
+
             float distance = person.getDistance();
             float angle = person.getTheta();
             rDistance.add(String.valueOf(distance));
@@ -365,6 +364,7 @@ public class FollowMePresenter {
             mPresenterChangeInterface.showToast("Head service: " + reason);
         }
     };
+
     private ServiceBinder.BindStateListener mBaseBindStateListener = new ServiceBinder.BindStateListener() {
         @Override
         public void onBind() {
@@ -378,7 +378,6 @@ public class FollowMePresenter {
             mPresenterChangeInterface.showToast("Base service: " + reason);
         }
     };
-
 
     public boolean isServicesAvailable() {
         return isVisionBind && isHeadBind && isBaseBind;
