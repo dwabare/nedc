@@ -125,6 +125,9 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     float distance = Float.parseFloat(distances[i]);
                     float angle = Float.parseFloat(angles[i]);
 
+                    String message = "Distance: " + distance + "  " + "Angle: " + (angle/Math.PI)*180;
+                    Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
+
                     mBase.addCheckPoint(0f,0f,angle);
                     resetHead();
 
@@ -155,6 +158,9 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 for (int i = distances.length-2 ; i >=0 ; i--) {
                     float distance = Float.parseFloat(distances[i]);
                     float angle = Float.parseFloat(angles[i+1]);
+
+                    String message = "Distance: " + distance + "  " + "Angle: " + (angle/Math.PI)*180;
+                    Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
 
                     mBase.addCheckPoint(0f,0f,-angle);
                     resetHead();
