@@ -119,19 +119,31 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 String[] distances = rDistance.toArray(new String[0]);
                 String[] angles = rAngle.toArray(new String[0]);
 
-                mBase.addCheckPoint(Float.parseFloat(distances[0]),0f);
+                float sPointX = Float.parseFloat(distances[0]) * (-1.0f);
+                float sPointY = 0f;
+                float sAngle = 0f;
+
+                mBase.addCheckPoint(sPointX,sPointY);
 
                 for (int i = 1 ; i < distances.length ; i++) {
-                    float distance = Float.parseFloat(distances[i]);
+                    float distance = Float.parseFloat(distances[i]) * (-1.0f);
                     float angle = Float.parseFloat(angles[i]);
 
-                    String message = "Distance: " + distance + "  " + "Angle: " + (angle/Math.PI)*180;
+                    sAngle = sAngle + angle;
+
+                    float xPath = distance * (float) Math.cos(sAngle);
+                    float yPath = distance * (float) Math.sin(sAngle);
+
+                    sPointX = sPointX + xPath;
+                    sPointY = sPointY + yPath;
+
+                    String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI)*180;
                     Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
 
-                    mBase.addCheckPoint(0f,0f,angle);
-                    resetHead();
-
-                    mBase.addCheckPoint(distance,0f);
+                    mBase.addCheckPoint(sPointX,sPointY);
+                    //mBase.addCheckPoint(0f,0f,angle);
+                    //resetHead();
+                    //mBase.addCheckPoint(distance,0f);
                     //float xPath = distance * (float) Math.cos(angle);
                     //float yPath = distance * (float) Math.sin(angle);
                     //mBase.addCheckPoint(xPath,yPath,angle);
@@ -153,19 +165,31 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 String[] distances = rDistance.toArray(new String[0]);
                 String[] angles = rAngle.toArray(new String[0]);
 
-                mBase.addCheckPoint(Float.parseFloat(distances[distances.length-1]),0f);
+                float sPointX = Float.parseFloat(distances[distances.length-1]) * (-1.0f);
+                float sPointY = 0f;
+                float sAngle = 0f;
+
+                mBase.addCheckPoint(sPointX,sPointY);
 
                 for (int i = distances.length-2 ; i >=0 ; i--) {
-                    float distance = Float.parseFloat(distances[i]);
-                    float angle = Float.parseFloat(angles[i+1]);
+                    float distance = Float.parseFloat(distances[i]) * (-1.0f);
+                    float angle = Float.parseFloat(angles[i+1]) * (-1.0f);
 
-                    String message = "Distance: " + distance + "  " + "Angle: " + (angle/Math.PI)*180;
+                    sAngle = sAngle + angle;
+
+                    float xPath = distance * (float) Math.cos(sAngle);
+                    float yPath = distance * (float) Math.sin(sAngle);
+
+                    sPointX = sPointX + xPath;
+                    sPointY = sPointY + yPath;
+
+                    String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI) * 180 * (-1.0f);
                     Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
 
-                    mBase.addCheckPoint(0f,0f,-angle);
-                    resetHead();
-
-                    mBase.addCheckPoint(distance,0f);
+                    mBase.addCheckPoint(sPointX,sPointY);
+                    //mBase.addCheckPoint(0f,0f,-angle);
+                    //resetHead();
+                    //mBase.addCheckPoint(distance,0f);
                     //float xPath = distance * (float) Math.cos(angle+Math.PI);
                     //float yPath = distance * (float) Math.sin(angle+Math.PI);
                     //mBase.addCheckPoint(xPath,yPath,angle);
