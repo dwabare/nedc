@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Surface;
 
+import com.segway.robot.algo.Pose2D;
 import com.segway.robot.algo.dts.BaseControlCommand;
 import com.segway.robot.algo.dts.DTSPerson;
 import com.segway.robot.algo.dts.PersonDetectListener;
@@ -24,6 +25,8 @@ import com.segway.robot.support.control.HeadPIDController;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * @author jacob
@@ -60,12 +63,33 @@ public class FollowMePresenter {
 
     private RobotStateType mCurrentState;
 
+    private Pose2D sPose;
+    private Timer timer;
+
     private Set<String> rDistance;
     private Set<String> rAngle;
 
     public enum RobotStateType {
         INITIATE_DETECT, TERMINATE_DETECT, INITIATE_TRACK, TERMINATE_TRACK;
     }
+
+    private TimerTask doAsynchronousTask = new TimerTask() {
+        @Override
+        public void run() {
+            Pose2D curPose = mBase.getOdometryPose(-1);
+            if(!curPose.equals(sPose)) {
+                float dPathX = curPose.getX() - sPose.getX();
+                float dPathY = curPose.getY() - sPose.getY();
+                float dist = (float) Math.hypot(dPathX, dPathY);
+                float theta = (float) Math.atan2(dPathY, dPathX);
+
+                rDistance.add(String.valueOf(dist));
+                rAngle.add(String.valueOf(theta));
+
+                sPose = curPose;
+            }
+        }
+    };
 
     public FollowMePresenter(PresenterChangeInterface mPresenterChangeInterface, ViewChangeInterface mViewChangeInterface) {
         this.mPresenterChangeInterface = mPresenterChangeInterface;
@@ -138,6 +162,8 @@ public class FollowMePresenter {
         }
     }
 
+
+
     public void actionInitiateTrack() {
         if (mCurrentState == RobotStateType.INITIATE_TRACK) {
             return;
@@ -156,6 +182,10 @@ public class FollowMePresenter {
         }
         mPresenterChangeInterface.showToast("initiate tracking....");
 
+        sPose = mBase.getOdometryPose(-1);
+        timer = new Timer();
+        timer.schedule(doAsynchronousTask, 0, 3*1000);
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putBoolean("isArrived",false);
@@ -172,6 +202,17 @@ public class FollowMePresenter {
             }
             mPresenterChangeInterface.showToast("terminate tracking....");
 
+            Pose2D curPose = mBase.getOdometryPose(-1);
+            if(!curPose.equals(sPose)) {
+                float dPathX = curPose.getX() - sPose.getX();
+                float dPathY = curPose.getY() - sPose.getY();
+                float dist = (float) Math.hypot(dPathX, dPathY);
+                float theta = (float) Math.atan2(dPathY, dPathX);
+
+                rDistance.add(String.valueOf(dist));
+                rAngle.add(String.valueOf(theta));
+            }
+
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putStringSet("robotDistance",rDistance);
@@ -181,6 +222,8 @@ public class FollowMePresenter {
         } else {
             mPresenterChangeInterface.showToast("The app is not in tracking mode yet.");
         }
+
+        timer.cancel();
     }
 
     /**************************  detecting and tracking listeners   *****************************/
@@ -268,12 +311,6 @@ public class FollowMePresenter {
                 }
                 return;
             }
-
-
-            float distance = person.getDistance();
-            float angle = person.getTheta();
-            rDistance.add(String.valueOf(distance));
-            rAngle.add(String.valueOf(angle));
 
             startTime = System.currentTimeMillis();
             mPresenterChangeInterface.drawPerson(person);

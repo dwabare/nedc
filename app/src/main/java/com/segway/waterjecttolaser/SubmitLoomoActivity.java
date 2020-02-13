@@ -18,13 +18,14 @@ import com.segway.robot.algo.minicontroller.CheckPointStateListener;
 import com.segway.robot.sdk.base.bind.ServiceBinder;
 import com.segway.robot.sdk.locomotion.head.Head;
 import com.segway.robot.sdk.locomotion.sbv.Base;
+
 import java.util.Objects;
 import java.util.Set;
 
 public class SubmitLoomoActivity extends AppCompatActivity {
     private Base mBase;
     private Head mHead;
-    SharedPreferences sharedPref;
+    private SharedPreferences sharedPref;
     private Set<String> rDistance;
     private Set<String> rAngle;
     private Button moveBtn;
@@ -81,7 +82,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
         mBase.setOnCheckPointArrivedListener(new CheckPointStateListener() {
             @Override
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
-                Toast.makeText(CustomApplication.getContext(), "onCheckPointArrived: x: " + checkPoint.getX() + " y: " + checkPoint.getY(),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(CustomApplication.getContext(), "onCheckPointArrived: x: " + checkPoint.getX() + " y: " + checkPoint.getY(),Toast.LENGTH_SHORT).show();
                 if(isLast){
                     SharedPreferences.Editor editor = sharedPref.edit();
                     boolean isArrived = sharedPref.getBoolean("isArrived",false);
@@ -113,6 +114,9 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
 
+                mBase.setUltrasonicObstacleAvoidanceEnabled(true);
+                mBase.setUltrasonicObstacleAvoidanceDistance(0.45f);
+
                 mBase.addCheckPoint(0f,0f,(float) (Math.PI));
                 resetHead();
 
@@ -138,7 +142,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     sPointY = sPointY + yPath;
 
                     String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI)*180;
-                    Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
 
                     mBase.addCheckPoint(sPointX,sPointY);
                     //mBase.addCheckPoint(0f,0f,angle);
@@ -158,6 +162,9 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                 mBase.cleanOriginalPoint();
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
+
+                mBase.setUltrasonicObstacleAvoidanceEnabled(true);
+                mBase.setUltrasonicObstacleAvoidanceDistance(0.45f);
 
                 mBase.addCheckPoint(0f,0f,(float) (Math.PI));
                 resetHead();
@@ -183,8 +190,8 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     sPointX = sPointX + xPath;
                     sPointY = sPointY + yPath;
 
-                    String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI) * 180 * (-1.0f);
-                    Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
+                    //String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI) * 180 * (-1.0f);
+                    //Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
 
                     mBase.addCheckPoint(sPointX,sPointY);
                     //mBase.addCheckPoint(0f,0f,-angle);
