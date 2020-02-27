@@ -63,8 +63,8 @@ public class FollowMePresenter {
 
     private RobotStateType mCurrentState;
 
-    private Pose2D sPose;
-    private Timer timer;
+    //private Pose2D sPose;
+    //private Timer timer;
 
     private Set<String> rDistance;
     private Set<String> rAngle;
@@ -73,6 +73,7 @@ public class FollowMePresenter {
         INITIATE_DETECT, TERMINATE_DETECT, INITIATE_TRACK, TERMINATE_TRACK;
     }
 
+    /*
     private TimerTask doAsynchronousTask = new TimerTask() {
         @Override
         public void run() {
@@ -89,7 +90,7 @@ public class FollowMePresenter {
                 sPose = curPose;
             }
         }
-    };
+    };*/
 
     public FollowMePresenter(PresenterChangeInterface mPresenterChangeInterface, ViewChangeInterface mViewChangeInterface) {
         this.mPresenterChangeInterface = mPresenterChangeInterface;
@@ -182,9 +183,9 @@ public class FollowMePresenter {
         }
         mPresenterChangeInterface.showToast("initiate tracking....");
 
-        sPose = mBase.getOdometryPose(-1);
-        timer = new Timer();
-        timer.schedule(doAsynchronousTask, 0, 3*1000);
+        //sPose = mBase.getOdometryPose(-1);
+        //timer = new Timer();
+        //timer.schedule(doAsynchronousTask, 0, 3*1000);
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -202,6 +203,7 @@ public class FollowMePresenter {
             }
             mPresenterChangeInterface.showToast("terminate tracking....");
 
+            /*
             Pose2D curPose = mBase.getOdometryPose(-1);
             if(!curPose.equals(sPose)) {
                 float dPathX = curPose.getX() - sPose.getX();
@@ -211,8 +213,7 @@ public class FollowMePresenter {
 
                 rDistance.add(String.valueOf(dist));
                 rAngle.add(String.valueOf(theta));
-            }
-
+            }*/
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(CustomApplication.getContext());
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putStringSet("robotDistance",rDistance);
@@ -223,7 +224,7 @@ public class FollowMePresenter {
             mPresenterChangeInterface.showToast("The app is not in tracking mode yet.");
         }
 
-        timer.cancel();
+        //timer.cancel();
     }
 
     /**************************  detecting and tracking listeners   *****************************/
@@ -320,6 +321,8 @@ public class FollowMePresenter {
             switch (baseControlCommand.getFollowState()) {
                 case BaseControlCommand.State.NORMAL_FOLLOW:
                     setBaseVelocity(baseControlCommand.getLinearVelocity(), baseControlCommand.getAngularVelocity());
+                    rDistance.add(String.valueOf(baseControlCommand.getLinearVelocity()));
+                    rAngle.add(String.valueOf(baseControlCommand.getAngularVelocity()));
                     break;
                 case BaseControlCommand.State.HEAD_FOLLOW_BASE:
                     mBase.setControlMode(Base.CONTROL_MODE_FOLLOW_TARGET);
