@@ -319,8 +319,8 @@ public class FollowMePresenter {
             mHeadPIDController.updateTarget(person.getTheta(), person.getDrawingRect(), 480);
 
             float deltaT = (System.currentTimeMillis() - startTime) / 1000;
-            float distance = deltaT * mBase.getLinearVelocity().getSpeed();
             float angle  = deltaT * mBase.getAngularVelocity().getSpeed();
+            float distance = deltaT * mBase.getLinearVelocity().getSpeed() * (float) Math.cos(angle);
             mPresenterChangeInterface.showToast("distance: "+distance+"   "+"angle: "+angle);
             rDistance.add(String.valueOf(distance));
             rAngle.add(String.valueOf(angle));
