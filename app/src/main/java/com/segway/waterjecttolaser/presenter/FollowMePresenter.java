@@ -70,7 +70,7 @@ public class FollowMePresenter {
     private Set<String> rAngle;
 
     public enum RobotStateType {
-        INITIATE_DETECT, TERMINATE_DETECT, INITIATE_TRACK, TERMINATE_TRACK;
+        INITIATE_DETECT, TERMINATE_DETECT, INITIATE_TRACK, TERMINATE_TRACK
     }
 
     /*
@@ -240,7 +240,7 @@ public class FollowMePresenter {
             }
             startTime = System.currentTimeMillis();
             mPresenterChangeInterface.drawPersons(person);
-            mPresenterChangeInterface.showToast("Person Detected!");
+            //mPresenterChangeInterface.showToast("Person Detected!");
             if (isServicesAvailable()) {
                 mHead.setMode(Head.MODE_ORIENTATION_LOCK);
                 mHeadPIDController.updateTarget(person[0].getTheta(), person[0].getDrawingRect(), 480);
@@ -318,11 +318,18 @@ public class FollowMePresenter {
             mHead.setMode(Head.MODE_ORIENTATION_LOCK);
             mHeadPIDController.updateTarget(person.getTheta(), person.getDrawingRect(), 480);
 
+            float deltaT = (System.currentTimeMillis() - startTime) / 1000;
+            float distance = deltaT * mBase.getLinearVelocity().getSpeed();
+            float angle  = deltaT * mBase.getAngularVelocity().getSpeed();
+            mPresenterChangeInterface.showToast("distance: "+distance+"   "+"angle: "+angle);
+            rDistance.add(String.valueOf(distance));
+            rAngle.add(String.valueOf(angle));
+
             switch (baseControlCommand.getFollowState()) {
                 case BaseControlCommand.State.NORMAL_FOLLOW:
                     setBaseVelocity(baseControlCommand.getLinearVelocity(), baseControlCommand.getAngularVelocity());
-                    rDistance.add(String.valueOf(baseControlCommand.getLinearVelocity()));
-                    rAngle.add(String.valueOf(baseControlCommand.getAngularVelocity()));
+                    //rDistance.add(String.valueOf(baseControlCommand.getLinearVelocity()));
+                    //rAngle.add(String.valueOf(baseControlCommand.getAngularVelocity()));
                     break;
                 case BaseControlCommand.State.HEAD_FOLLOW_BASE:
                     mBase.setControlMode(Base.CONTROL_MODE_FOLLOW_TARGET);

@@ -35,8 +35,8 @@ public class SubmitLoomoActivity extends AppCompatActivity {
     private Button moveBtn;
     private Button backBtn;
 
-    private Timer timer;
-    private int counter = 0;
+    //private Timer timer;
+    //private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
             public void onUnbind(String reason) { }
         });
 
-        /*
+
         mBase.setOnCheckPointArrivedListener(new CheckPointStateListener() {
             @Override
             public void onCheckPointArrived(CheckPoint checkPoint, final Pose2D realPose, boolean isLast) {
@@ -112,62 +112,25 @@ public class SubmitLoomoActivity extends AppCompatActivity {
 
             @Override
             public void onCheckPointMiss(CheckPoint checkPoint, Pose2D realPose, boolean isLast, int reason) { }
-        });*/
+        });
 
         moveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBase.setControlMode(Base.CONTROL_MODE_NAVIGATION);
-                mBase.addCheckPoint(0f,0f,(float) (Math.PI));
+
                 mBase.cleanOriginalPoint();
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
+
                 resetHead();
 
-                //mBase.setUltrasonicObstacleAvoidanceEnabled(true);
-                //mBase.setUltrasonicObstacleAvoidanceDistance(0.45f);
-
-                //mBase.addCheckPoint(0f,0f,(float) (Math.PI));
-                //resetHead();
+                mBase.setUltrasonicObstacleAvoidanceEnabled(true);
+                mBase.setUltrasonicObstacleAvoidanceDistance(0.25f);
 
                 distances = rDistance.toArray(new String[0]);
                 angles = rAngle.toArray(new String[0]);
-                counter = 0;
 
-                TimerTask doAsynchronousTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(counter < distances.length){
-                            float linearVelocity = Float.parseFloat(distances[counter]);
-                            float angleVelocity = Float.parseFloat(angles[counter]);
-                            setBaseVelocity(linearVelocity,angleVelocity);
-                            counter++;
-                        }else{
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            boolean isArrived = sharedPref.getBoolean("isArrived",false);
-                            if(isArrived){
-                                editor.putBoolean("isArrived",false);
-                                editor.apply();
-
-                                moveBtn.setEnabled(true);
-                                backBtn.setEnabled(false);
-                            }else{
-                                editor.putBoolean("isArrived",true);
-                                editor.apply();
-
-                                moveBtn.setEnabled(false);
-                                backBtn.setEnabled(true);
-                            }
-                            try {
-                                timer.cancel();
-                            }catch (Exception ex){ex.printStackTrace();}
-                        }
-                    }
-                };
-
-                timer = new Timer();
-                timer.schedule(doAsynchronousTask, 0, 400);
-                /*
                 float sPointX = Float.parseFloat(distances[0]) * (-1.0f);
                 float sPointY = 0f;
                 float sAngle = 0f;
@@ -186,17 +149,16 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     sPointX = sPointX + xPath;
                     sPointY = sPointY + yPath;
 
-                    String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI)*180;
-                    //Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
-
                     mBase.addCheckPoint(sPointX,sPointY);
+                    //String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI)*180;
+                    //Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
                     //mBase.addCheckPoint(0f,0f,angle);
                     //resetHead();
                     //mBase.addCheckPoint(distance,0f);
                     //float xPath = distance * (float) Math.cos(angle);
                     //float yPath = distance * (float) Math.sin(angle);
                     //mBase.addCheckPoint(xPath,yPath,angle);
-                }*/
+                }
             }
         });
 
@@ -204,58 +166,19 @@ public class SubmitLoomoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mBase.setControlMode(Base.CONTROL_MODE_NAVIGATION);
-                mBase.addCheckPoint(0f,0f,(float) (Math.PI));
+
                 mBase.cleanOriginalPoint();
                 Pose2D pose2D = mBase.getOdometryPose(-1);
                 mBase.setOriginalPoint(pose2D);
+
                 resetHead();
-                //mBase.setUltrasonicObstacleAvoidanceEnabled(true);
-                //mBase.setUltrasonicObstacleAvoidanceDistance(0.45f);
+
+                mBase.setUltrasonicObstacleAvoidanceEnabled(true);
+                mBase.setUltrasonicObstacleAvoidanceDistance(0.25f);
 
                 distances = rDistance.toArray(new String[0]);
                 angles = rAngle.toArray(new String[0]);
-                counter = distances.length - 1;
 
-                TimerTask doAsynchronousTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(counter >= 0){
-                            float linearVelocity = Float.parseFloat(distances[counter]);
-                            float angleVelocity = Float.parseFloat(angles[counter]);
-                            setBaseVelocity(linearVelocity,angleVelocity * (-1.0f));
-                            counter--;
-                        }else{
-                            SharedPreferences.Editor editor = sharedPref.edit();
-                            boolean isArrived = sharedPref.getBoolean("isArrived",false);
-                            if(isArrived){
-                                editor.putBoolean("isArrived",false);
-                                editor.apply();
-
-                                moveBtn.setEnabled(true);
-                                backBtn.setEnabled(false);
-                            }else{
-                                editor.putBoolean("isArrived",true);
-                                editor.apply();
-
-                                moveBtn.setEnabled(false);
-                                backBtn.setEnabled(true);
-                            }
-                            try {
-                                timer.cancel();
-                            }catch (Exception ex){ex.printStackTrace();}
-                        }
-                    }
-                };
-
-                timer = new Timer();
-                timer.schedule(doAsynchronousTask, 0, 400);
-                /*
-                for(int i=distances.length-1; i>=0; i--){
-                    float linearVelocity = Float.parseFloat(distances[i]);
-                    float angleVelocity = Float.parseFloat(angles[i]);
-                    setBaseVelocity();
-                }*/
-                /*
                 float sPointX = Float.parseFloat(distances[distances.length-1]) * (-1.0f);
                 float sPointY = 0f;
                 float sAngle = 0f;
@@ -274,17 +197,16 @@ public class SubmitLoomoActivity extends AppCompatActivity {
                     sPointX = sPointX + xPath;
                     sPointY = sPointY + yPath;
 
+                    mBase.addCheckPoint(sPointX,sPointY);
                     //String message = "Distance: " + distance * (-1.0f) + "  " + "Angle: " + (angle/Math.PI) * 180 * (-1.0f);
                     //Toast.makeText(CustomApplication.getContext(), message , Toast.LENGTH_SHORT).show();
-
-                    mBase.addCheckPoint(sPointX,sPointY);
                     //mBase.addCheckPoint(0f,0f,-angle);
                     //resetHead();
                     //mBase.addCheckPoint(distance,0f);
                     //float xPath = distance * (float) Math.cos(angle+Math.PI);
                     //float yPath = distance * (float) Math.sin(angle+Math.PI);
                     //mBase.addCheckPoint(xPath,yPath,angle);
-                }*/
+                }
             }
         });
 
@@ -293,10 +215,10 @@ public class SubmitLoomoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    mBase.stop();
+                    mBase.clearCheckPointsAndStop();
+                    //mBase.stop();
                     mHead.unbindService();
                     mBase.unbindService();
-                    //mBase.clearCheckPointsAndStop();
                 }catch (Exception ex){ex.printStackTrace();}
                 try {
                     Intent i = new Intent(SubmitLoomoActivity.this, MainActivity.class);
@@ -308,7 +230,7 @@ public class SubmitLoomoActivity extends AppCompatActivity {
 
     private void resetHead() {
         mHead.setMode(Head.MODE_SMOOTH_TACKING);
-        mHead.setWorldYaw(0);
+        mHead.setWorldYaw(1.0f);
         mHead.setWorldPitch(0.7f);
     }
 
